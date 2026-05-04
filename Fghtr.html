@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NurHub Obfuscator - Protection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0c12;
+            font-family: monospace;
+            min-height: 100vh;
+        }
+        .denied {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .denied-card {
+            background: #0a0a0f;
+            border: 2px solid #ef4444;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 450px;
+        }
+        .denied-card i {
+            font-size: 60px;
+            color: #ef4444;
+            margin-bottom: 20px;
+        }
+        .denied-card h1 {
+            color: #ef4444;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .denied-card p {
+            color: #9ca3af;
+            margin: 10px 0;
+        }
+        .denied-card button {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .protected {
+            display: none;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        pre {
+            background: #0a0a0f;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            overflow: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        button {
+            background: #10b981;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            color: white;
+        }
+        h2 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ACCESS DENIED SCREEN -->
+<div id="deniedScreen" class="denied">
+    <div class="denied-card">
+        <i>🔒</i>
+        <h1>ACCESS DENIED</h1>
+        <p>This script is protected by <strong>NurHub Security</strong></p>
+        <p>You don't have permission to access this file.</p>
+        <p style="color: #ef4444; font-size: 12px;">⚠️ Unauthorized access detected</p>
+        <button id="verifyBtn">Verify Access</button>
+    </div>
+</div>
+
+<!-- SCRIPT YANG DILINDUNGI -->
+<div id="protectedContent" class="protected">
+    <h2>✅ Authorized Access Granted</h2>
+    <p style="margin-bottom: 10px; color: #9ca3af;">Script di bawah sudah dilindungi oleh NurHub Security System.</p>
+    <pre id="scriptContent">-- ============================================
+-- NURHUB OBFUSCATOR V14.0
+-- ============================================
+
+local function universalObfuscateV14(script)
+    math.randomseed(os.time())
+    for _ = 1, 5 do math.random() end
+    
+    -- Random name generator
+    local function randName(len)
+        local firstChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        local otherChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        local name = firstChars:sub(math.random(#firstChars), math.random(#firstChars))
+        for i = 2, len or 8 do
+            name = name .. otherChars:sub(math.random(#otherChars), math.random(#otherChars))
+        end
+        return name
+    end
+    
+    -- CONTROL FLOW FLATTENING
+    local function flattenControlFlow(code)
+        local lines = {}
+        for line in code:gmatch("[^\n]+") do
+            table.insert(lines, line)
+        end
+        
+        local executableLines = {}
+        for i, line in ipairs(lines) do
+            if not line:match("^%s*print") 
+               and not line:match("^%s*local")
+               and not line:match("^%s*function")
+               and not line:match("^%s*--")
+               and not line:match("^%s*return")
+               and not line:match("^%s*end")
+               and #line > 8 then
+                table.insert(executableLines, {idx = i, line = line})
+            end
+        end
+        
+        if #executableLines < 2 then return code end
+        
+        local toFlatten = {}
+        local shuffle = {}
+        for i = 1, #executableLines do shuffle[i] = i end
+        
+        for i = #shuffle, 2, -1 do
+            local j = math.random(i)
+            shuffle[i], shuffle[j] = shuffle[j], shuffle[i]
+        end
+        
+        local flattenCount = math.min(math.random(2, 3), #executableLines)
+        for i = 1, flattenCount do
+            table.insert(toFlatten, executableLines[shuffle[i]])
+        end
+        
+        table.sort(toFlatten, function(a, b) return a.idx < b.idx end)
+        
+        local stateVar = "s" .. math.random(10000, 99999)
+        local funcPrefix = "f" .. math.random(10000, 99999)
+        local varPrefix = "v" .. math.random(10000, 99999)
+        
+        local flattenedCode = {}
+        local lastIdx = 1
+        
+        for _, item in ipairs(toFlatten) do
+            for i = lastIdx, item.idx - 1 do
+                table.insert(flattenedCode, lines[i])
+            end
+            
+            local funcName = funcPrefix .. "_" .. item.idx
+            local executedVar = varPrefix .. "_" .. item.idx
+            
+            table.insert(flattenedCode, "do")
+            table.insert(flattenedCode, "    local " .. funcName .. " = function()")
+            table.insert(flattenedCode, "        " .. item.line)
+            table.insert(flattenedCode, "    end")
+            table.insert(flattenedCode, "    local " .. stateVar .. " = 1")
+            table.insert(flattenedCode, "    local " .. executedVar .. " = false")
+            table.insert(flattenedCode, "    while " .. stateVar .. " ~= 0 do")
+            table.insert(flattenedCode, "        if " .. stateVar .. " == 1 and not " .. executedVar .. " then")
+            table.insert(flattenedCode, "            " .. funcName .. "()")
+            table.insert(flattenedCode, "            " .. executedVar .. " = true")
+            table.insert(flattenedCode, "            " .. stateVar .. " = 0")
+            table.insert(flattenedCode, "        end")
+            table.insert(flattenedCode, "    end")
+            table.insert(flattenedCode, "end")
+            
+            lastIdx = item.idx + 1
+        end
+        
+        for i = lastIdx, #lines do
+            table.insert(flattenedCode, lines[i])
+        end
+        
+        return table.concat(flattenedCode, "\n")
+    end
+    
+    -- GARBAGE CODE INJECTION
+    local function injectGarbage(code)
+        local garbageList = {
+            "do local _ = {} for _i = 1, math.random(10,50) do _[_i] = _i end end",
+            "if 2 + 2 == 5 then local _x = \"dead\" end",
+            "local _dummy = (function() return 1 end)()",
+            "do local _t = {1,2,3} local _s = 0 for _,_v in pairs(_t) do _s = _s + _v end end",
+            "local _calc = (12345 * 6789) % 1000",
+            "do local _r = math.random(1,100) if _r > 10000 then print('never') end end",
+            "local _nil = nil if _nil then print('impossible') end",
+        }
+        
+        local lines = {}
+        for line in code:gmatch("[^\n]+") do
+            table.insert(lines, line)
+            if #line > 10 and math.random() < 0.1 then
+                local garbage = garbageList[math.random(#garbageList)]
+                table.insert(lines, "    " .. garbage)
+            end
+        end
+        
+        return table.concat(lines, "\n")
+    end
+    
+    -- APPLY OBFUSCATION
+    if math.random() < 0.7 then
+        script = injectGarbage(script)
+    end
+    
+    if math.random() < 0.5 then
+        script = flattenControlFlow(script)
+    end
+    
+    if math.random() < 0.3 then
+        script = flattenControlFlow(script)
+    end
+    
+    -- SAFE ANTI DEBUG
+    local function getSafeAntiDebug()
+        local ad1 = randName(6)
+        local ad2 = randName(6)
+        local ad3 = randName(6)
+        
+        return [[
+do
+    local ]] .. ad1 .. [[ = pcall(function()
+        if debug and type(debug) == "table" then
+            if debug.getinfo or debug.traceback then
+                return false
+            end
+        end
+        return true
+    end)
+    
+    local ]] .. ad2 .. [[ = os.clock()
+    local ]] .. ad3 .. [[ = 0
+    for i = 1, 10000 do
+        ]] .. ad3 .. [[ = ]] .. ad3 .. [[ + i
+    end
+    if os.clock() - ]] .. ad2 .. [[ < 0.0001 then
+    end
+end
+]]
+    end
+    
+    -- SAFE ANTI TAMPER
+    local function getSafeAntiTamper()
+        local csName = randName(7)
+        return [[
+local function ]] .. csName .. [[(str)
+    local sum = 0
+    for i = 1, #str do
+        sum = (sum + string.byte(str, i)) % 65536
+    end
+    return sum
+end
+]]
+    end
+    
+    -- Multi-layer encrypt
+    local function layer1(str)
+        local arr = {}
+        local shift = math.random(40, 150)
+        for i = 1, #str do
+            arr[i] = (string.byte(str, i) + shift + (i % 7)) % 256
+        end
+        local rev = {}
+        for i = #arr, 1, -1 do rev[#rev + 1] = arr[i] end
+        return rev, shift
+    end
+    
+    local function layer2(arr)
+        local shift = math.random(30, 120)
+        local result = {}
+        for i = 1, #arr do
+            result[i] = (arr[i] + shift + (i % 5)) % 256
+        end
+        return result, shift
+    end
+    
+    local function layer3(arr)
+        local shift = math.random(20, 100)
+        local result = {}
+        for i = 1, #arr do
+            result[i] = (arr[i] + shift + (i % 13)) % 256
+        end
+        return result, shift
+    end
+    
+    local l1arr, l1shift = layer1(script)
+    local l2arr, l2shift = layer2(l1arr)
+    local l3arr, l3shift = layer3(l2arr)
+    
+    -- Build array string
+    local arrayStr = ""
+    for i = 1, #l3arr do
+        arrayStr = arrayStr .. l3arr[i]
+        if i < #l3arr then arrayStr = arrayStr .. "," end
+        if i % 20 == 0 then arrayStr = arrayStr .. "\n    " end
+    end
+    
+    -- Random names
+    local arrName = randName(10)
+    local k1Name = randName(6)
+    local k2Name = randName(6)
+    local k3Name = randName(6)
+    local t1Name = randName(7)
+    local t2Name = randName(7)
+    local idxName = randName(4)
+    local tmpName = randName(5)
+    local resName = randName(9)
+    
+    -- Hide shift keys
+    local function hideNum(n)
+        local a = math.random(300, 900)
+        local b = a - n
+        return "(" .. a .. "-" .. b .. ")"
+    end
+    
+    -- BUILD FINAL TEMPLATE
+    local obfuscated = "-- NurHub Obfuscator V14.0\n"
+    obfuscated = obfuscated .. "do\n"
+    obfuscated = obfuscated .. getSafeAntiDebug()
+    obfuscated = obfuscated .. getSafeAntiTamper()
+    
+    obfuscated = obfuscated .. "local " .. arrName .. " = {" .. arrayStr .. "}\n"
+    obfuscated = obfuscated .. "local " .. k1Name .. " = " .. hideNum(l1shift) .. "\n"
+    obfuscated = obfuscated .. "local " .. k2Name .. " = " .. hideNum(l2shift) .. "\n"
+    obfuscated = obfuscated .. "local " .. k3Name .. " = " .. hideNum(l3shift) .. "\n"
+    obfuscated = obfuscated .. "local " .. t1Name .. " = {}\n"
+    obfuscated = obfuscated .. "local " .. t2Name .. " = {}\n"
+    
+    obfuscated = obfuscated .. "for " .. idxName .. " = 1, #" .. arrName .. " do\n"
+    obfuscated = obfuscated .. "    " .. t1Name .. "[" .. idxName .. "] = " .. arrName .. "[" .. idxName .. "]\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. "for " .. idxName .. " = 1, #" .. t1Name .. " do\n"
+    obfuscated = obfuscated .. "    local " .. tmpName .. " = (" .. t1Name .. "[" .. idxName .. "] - " .. k3Name .. " - (" .. idxName .. " % 13)) % 256\n"
+    obfuscated = obfuscated .. "    " .. t2Name .. "[" .. idxName .. "] = " .. tmpName .. "\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. "for " .. idxName .. " = 1, #" .. t2Name .. " do\n"
+    obfuscated = obfuscated .. "    local " .. tmpName .. " = (" .. t2Name .. "[" .. idxName .. "] - " .. k2Name .. " - (" .. idxName .. " % 5)) % 256\n"
+    obfuscated = obfuscated .. "    " .. t1Name .. "[" .. idxName .. "] = " .. tmpName .. "\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. t2Name .. " = {}\n"
+    obfuscated = obfuscated .. "for " .. idxName .. " = #" .. t1Name .. ", 1, -1 do\n"
+    obfuscated = obfuscated .. "    " .. t2Name .. "[#" .. t2Name .. " + 1] = " .. t1Name .. "[" .. idxName .. "]\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. "for " .. idxName .. " = 1, #" .. t2Name .. " do\n"
+    obfuscated = obfuscated .. "    local " .. tmpName .. " = (" .. t2Name .. "[" .. idxName .. "] - " .. k1Name .. " - (" .. idxName .. " % 7)) % 256\n"
+    obfuscated = obfuscated .. "    " .. t1Name .. "[" .. idxName .. "] = " .. tmpName .. "\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. "local " .. resName .. " = \"\"\n"
+    obfuscated = obfuscated .. "for " .. idxName .. " = 1, #" .. t1Name .. " do\n"
+    obfuscated = obfuscated .. "    " .. resName .. " = " .. resName .. " .. string.char(" .. t1Name .. "[" .. idxName .. "])\n"
+    obfuscated = obfuscated .. "end\n"
+    
+    obfuscated = obfuscated .. "local success, result = pcall(function()\n"
+    obfuscated = obfuscated .. "    local func = loadstring or load\n"
+    obfuscated = obfuscated .. "    local chunk = func(" .. resName .. ")\n"
+    obfuscated = obfuscated .. "    if chunk then\n"
+    obfuscated = obfuscated .. "        chunk()\n"
+    obfuscated = obfuscated .. "    end\n"
+    obfuscated = obfuscated .. "end)\n"
+    obfuscated = obfuscated .. "end"
+    
+    return obfuscated
+end
+
+-- EXPORT
+getgenv().NurHub = {
+    Obfuscate = universalObfuscateV14,
+    Version = "14.0",
+    Protected = true
+}
+
+print("✅ NurHub Obfuscator V14.0 Loaded (Protected)")
+print("📊 Use: NurHub.Obfuscate(yourScript)")</pre>
+    <button onclick="copyScript()">📋 Copy Script</button>
+</div>
+
+<script>
+    let verified = false;
+    
+    document.getElementById('verifyBtn').onclick = function() {
+        if (!verified) {
+            this.textContent = 'Click Again to Verify';
+            this.style.background = '#dc2626';
+            verified = true;
+        } else {
+            document.getElementById('deniedScreen').style.display = 'none';
+            document.getElementById('protectedContent').style.display = 'block';
+        }
+    };
+    
+    function copyScript() {
+        const script = document.getElementById('scriptContent').innerText;
+        navigator.clipboard.writeText(script);
+        alert('✅ Script copied to clipboard! Paste ke Delta Executor');
+    }
+</script>
+
+</body>
+</html>
