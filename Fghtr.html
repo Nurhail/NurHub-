@@ -75,7 +75,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        button {
+        .copy-btn {
             background: #10b981;
             border: none;
             padding: 8px 20px;
@@ -83,10 +83,6 @@
             margin-top: 10px;
             cursor: pointer;
             color: white;
-        }
-        h2 {
-            color: #10b981;
-            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -116,7 +112,6 @@ local function universalObfuscateV14(script)
     math.randomseed(os.time())
     for _ = 1, 5 do math.random() end
     
-    -- Random name generator
     local function randName(len)
         local firstChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         local otherChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -407,7 +402,7 @@ getgenv().NurHub = {
 
 print("✅ NurHub Obfuscator V14.0 Loaded (Protected)")
 print("📊 Use: NurHub.Obfuscate(yourScript)")</pre>
-    <button onclick="copyScript()">📋 Copy Script</button>
+    <button class="copy-btn" onclick="copyScript()">📋 Copy Script</button>
 </div>
 
 <script>
